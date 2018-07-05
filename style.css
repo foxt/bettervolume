@@ -1,0 +1,55 @@
+@import url("./node_modules/bulma/css/bulma.css");
+@import url("./font-awesome/css/fontawesome-all.css");
+html {
+    background: transparent !important;
+    overflow:hidden;
+}
+.tlc {
+    background: rgba(0,0,0,0.4);
+    overflow:hidden;
+    color: #fff;
+    border-bottom-right-radius: 0.3em;
+    border-bottom-left-radius: 0.3em;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    transition: 0.5s all;
+}
+#container {
+    display: none;
+}
+#loader > * {
+    position: fixed;
+    left: 50%;
+    top: calc(50% - 0.5em);
+    transform: translate(-50%,0%);
+}
+#containercontainer {
+    padding: 0.2em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+#progress {
+    width: calc(100% - 3.5em);
+     /* position: fixed; */
+     margin-left: 0.5em;
+    transform: translate(0%,-50%);
+    top: 50%;
+
+}
+#progress::-webkit-progress-bar {
+    background: rgba(0,0,0,0.5)
+}
+i,#progress,#spotify,#containercontainer {
+    display: inline-block;
+}
+i {
+    transition: 0.25s all;
+    max-width: 1em;
+    min-width: 1em;
+}
+#spotify {
+    transform: translate(0%,-25%);
+    white-space: nowrap;
+}.

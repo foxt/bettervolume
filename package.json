@@ -1,0 +1,32 @@
+{
+  "name": "bettervolume",
+  "version": "1.0.0",
+  "description": "A better volume OSD for Windows, built with Electron",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/thelmgn/bettervolume.git"
+  },
+  "keywords": [
+    "windows",
+    "volume",
+    "win32",
+    "hud",
+    "electron"
+  ],
+  "author": "theLMGN",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/thelmgn/bettervolume/issues"
+  },
+  "homepage": "https://github.com/thelmgn/bettervolume#readme",
+  "dependencies": {
+    "bulma": "^0.7.1",
+    "electron": "^1.8.4",
+    "font-awesome": "^4.7.0",
+    "spotify-web-helper": "^1.13.0"
+  }
+}

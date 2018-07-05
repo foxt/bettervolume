@@ -1,0 +1,122 @@
+<style>@import url("./style.css");</style>
+<div id="container"class="tlc">
+    <div id="containercontainer">
+            
+        <i class="fa fa-volume-off fa-2x" id="mute"></i>
+        <progress id="progress" class="progress is-light" value="50" max="100"></progress>
+        
+    </div>
+    <span id="spotify">
+        </span>
+</div>
+<div id="loader" class="tlc">
+    <i class="fa fa-sync fa-spin"></i> 
+</div>
+<style id="progressInner">
+#progress::-webkit-progress-value {
+    background: -webkit-linear-gradient(left, #fcfcfc 0%,#ffffff 50%,#a5a5a5 50%,#a5a5a5 100%);
+}
+</style>
+<style id="progressAnim">
+#progress::-webkit-progress-value {
+    transition: 0.25s all;
+}
+</style>
+<style id="containerAnim">
+    .tlc {
+        transition: 0.5s all;
+    }
+</style>
+
+<script>
+    var oldVol = -1;
+var oldmute = "a"
+const {ipcRenderer} = require('electron');
+var slideUpAnim = null;
+var config = {removeOSD:!0,timeToLive:5000,highVolumeThreshold:50,screenWidth:1920,padding:40,showLoudness:!0,animations:{slideUpDownColour:{time:0.5,enabled:!0,},volumeChange:{time:0.25,enabled:!0,}}};
+function interest() {
+    if (slideUpAnim) {clearTimeout(slideUpAnim);}
+        document.getElementById("container").style.bottom = 0;
+        
+        slideUpAnim = setTimeout(function() {
+            console.log("here we go!")
+            document.getElementById("container").style.bottom = "100vh";
+            // document.getElementById("progress").style.top = "-50%";
+        },config.timeToLive)
+        
+}
+ipcRenderer.on('alert', (event, args) => {
+    document.getElementById("loader").style.display = "none"
+    document.getElementById("container").style.display = "block"
+    document.getElementById("loader").innerHTML = args;
+    var vdata = JSON.parse(args);
+    document.getElementById("progress").value = vdata.volume;
+    if (config.showLoudness) {
+        document.querySelector("#progressInner").innerHTML = `#progress::-webkit-progress-value {
+            background: -webkit-linear-gradient(left, #fcfcfc 0%,#ffffff ${vdata.out}%,#a5a5a5 ${vdata.out}%,#a5a5a5 100%);
+        }`
+    } else {
+        document.querySelector("#progressInner").innerHTML = ``
+    }
+    if (config.animations.volumeChange.enabled) {
+        document.querySelector("#progressAnim").innerHTML = `#progress::-webkit-progress-value {
+            transition: ${config.animations.volumeChange.time}s all;
+        }`
+    } else {
+        document.querySelector("#progressAnim").innerHTML = ``
+    }
+    if (config.animations.slideUpDownColour.enabled) {
+        document.querySelector("#containerAnim").innerHTML = `.tlc,#progress,#containercontainer {
+        transition: ${config.animations.slideUpDownColour.time}s all;
+    }`
+    } else {
+        document.querySelector("#containerAnim").innerHTML = ``
+    }
+    if (oldVol !== vdata.volume || oldmute !== vdata.mute) {
+        console.log("new vol")
+        interest()
+        console.log(vdata.mute)
+        oldmute = vdata.mute
+        oldVol = vdata.volume
+        if (vdata.mute == true) {
+            console.log("moot")
+            document.getElementById("container").style.background = "rgba(128,0,0,0.6)"
+            document.getElementById("mute").className = "fa fa-volume-off fa-2x"
+        } else {
+            document.getElementById("container").style.background = "rgba(0,0,0,0.4)"
+            if (vdata.volume > config.highVolumeThreshold) {
+                document.getElementById("mute").className = "fa fa-volume-up fa-2x"
+            } else {
+                document.getElementById("mute").className = "fa fa-volume-down fa-2x"
+            }
+        }
+    }
+})
+ipcRenderer.on('config', (event, configg) => {
+    config = configg;
+})
+function handleSpotifySong(e,song) {
+    document.getElementById("spotify").innerText = song.track_resource.name + " by " + song.artist_resource.name
+    document.getElementById("spotify").style.minWidth = "23%"
+    document.getElementById("spotify").style.maxWidth = "23%"
+    document.getElementById("containercontainer").style.minWidth = "75%"
+    document.getElementById("containercontainer").style.maxWidth = "75%"
+    interest()
+}
+ipcRenderer.on('des', handleSpotifySong)
+ipcRenderer.on('pa', handleSpotifySong)
+ipcRenderer.on('cito', function() {
+    document.getElementById("spotify").style.minWidth = "0%"
+    document.getElementById("spotify").style.maxWidth = "0%"
+    document.getElementById("containercontainer").style.minWidth = "100%"
+    document.getElementById("containercontainer").style.maxWidth = "100%"
+    document.getElementById("spotify").innerText = ""
+    interest()
+})
+document.getElementById("spotify").style.minWidth = "0%"
+document.getElementById("spotify").style.maxWidth = "0%"
+document.getElementById("containercontainer").style.minWidth = "100%"
+document.getElementById("containercontainer").style.maxWidth = "100%"
+document.getElementById("spotify").innerText = ""
+ipcRenderer.send('loaded',true);
+</script>
