@@ -5,9 +5,10 @@ A little tool made by theLMGN that removes the default Windows volume HUD and re
 ## Installation Instructions
 
 1. Download and extract https://github.com/theLMGN/bettervolume/archive/master.zip
-2. Click "electron.exe - Shortcut.lnk"
-3. ???
-4. Profit
+2. Edit the config in (config.js) with a text editor such as Notepad++ or VS Code, **not Notepad**.
+3. Click "electron.exe - Shortcut.lnk"
+4. ???
+5. Profit
 
 ## Thanks!
 
