@@ -5,10 +5,11 @@ const { spawn } = require('child_process');
 const app = e.app;
 const {ipcMain} = require('electron')
 const config = require("./config")
-const SpotifyWebHelper = require('spotify-web-helper');
+
  
 
 function createWindow() {
+	console.log("Electron ready!")
     const window = new e.BrowserWindow({
         x: config.padding,
         y: 0,
@@ -21,8 +22,8 @@ function createWindow() {
         maximizable: false,
         minimizable: false,
         transparent: true,
-        alwaysOnTop: true,
         experimentalFeatures: true
+		
     });
     window.loadURL('file://' +  __dirname +'/rendered.html')
     if (os.platform() !== "win32") {
@@ -35,40 +36,25 @@ function createWindow() {
     // }
     // var electronVibrancy = require('electron-vibrancy');
     // electronVibrancy.SetVibrancy(true,window.getNativeWindowHandle());
-    // window.openDevTools();
+    //window.openDevTools();
     window.setIgnoreMouseEvents(true);
-    
+    console.log("Window ready!")
     ipcMain.on('loaded', (event, arg) => {
+		console.log("Window loaded!")
         const child = spawn('./volumeStreamer.exe');
         if (config.removeOSD) {
             const osdslaughterer = spawn('./volstep.exe');
         }
+		console.log("Subprocesses spawned")
         
         window.webContents.send("config",config)
+		console.log("Config sent")
         child.stdout.on('data', (data) => {
+			console.log("Data spawned")
             window.webContents.send("alert",data);
+			window.setAlwaysOnTop(true);
         });
 
-
-       
-
-        const helper = SpotifyWebHelper();
-        helper.player.on('error', err => {});
-        helper.player.on('ready', () => {
-            helper.player.on('play', () => { 
-                window.webContents.send("des",helper.status.track.track_resource.name);
-            });
-            helper.player.on('track-will-change', track => {
-                setTimeout(function (){
-                    window.webContents.send("pa",helper.status.track);
-                }, 15)
-
-               
-            });
-            helper.player.on('pause', () => { 
-                window.webContents.send("cito","");
-            });
-        })
     })
         
 }
